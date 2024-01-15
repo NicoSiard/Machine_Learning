@@ -52,24 +52,28 @@ def computeAglomerative (datanp, limit, k_min, k_max, threshold_min, threshold_s
             labels = model.labels_
             
             #compute metrics and compare with previous iteration
-            if (metric == "silhouette"):
-                score = metrics.silhouette_score(datanp, labels)
-                if (score > best_score):
-                    best_score = score
-                    best_k = k
-                    best_model = model
-            elif (metric == "Davies-Bouldin"):
-                score = metrics.davies_bouldin_score(datanp, labels)
-                if (score < best_score):
-                    best_score = score
-                    best_k = k
-                    best_model = model
-            elif (metric == "Calinski-Harabasz"):
-                score = metrics.calinski_harabasz_score(datanp, labels)
-                if (score > best_score):
-                    best_score = score
-                    best_k = k
-                    best_model = model
+            try :
+                if (metric == "silhouette"):
+                    score = metrics.silhouette_score(datanp, labels)
+                    if (score > best_score):
+                        best_score = score
+                        best_k = k
+                        best_model = model
+                elif (metric == "Davies-Bouldin"):
+                    score = metrics.davies_bouldin_score(datanp, labels)
+                    if (score < best_score):
+                        best_score = score
+                        best_k = k
+                        best_model = model
+                elif (metric == "Calinski-Harabasz"):
+                    score = metrics.calinski_harabasz_score(datanp, labels)
+                    if (score > best_score):
+                        best_score = score
+                        best_k = k
+                        best_model = model
+
+            except ValueError:
+                print(k, " cluster(s) result in only on label, remove it")
 
                     
         print ("best number of clusters with" , linkage, "aglomerative clustering and metrics", metric, ":", best_k)
@@ -79,29 +83,35 @@ def computeAglomerative (datanp, limit, k_min, k_max, threshold_min, threshold_s
     elif (limit == "threshold"):
         threshold = threshold_min
         while (threshold <= threshold_max):
-            model = cluster.AgglomerativeClustering(distance_threshold = threshold, linkage = 'single' , n_clusters = None )
+            model = cluster.AgglomerativeClustering(distance_threshold = threshold, linkage = linkage , n_clusters = None )
             model = model.fit(datanp)
             labels = model.labels_
             
-            #compute metrics and compare with previous iteration
-            if (metric == "silhouette"):
-                score = metrics.silhouette_score(datanp, labels)
-                if (score > best_score):
-                    best_score = score
-                    best_t = threshold
-                    best_model = model
-            elif (metric == "Davies-Bouldin"):
-                score = metrics.davies_bouldin_score(datanp, labels)
-                if (score < best_score):
-                    best_score = score
-                    best_t = threshold
-                    best_model = model
-            elif (metric == "Calinski-Harabasz"):
-                score = metrics.calinski_harabasz_score(datanp, labels)
-                if (score > best_score):
-                    best_score = score
-                    best_t = threshold
-                    best_model = model
+            try:
+                #compute metrics and compare with previous iteration
+                if (metric == "silhouette"):
+                    score = metrics.silhouette_score(datanp, labels)
+                    if (score > best_score):
+                        best_score = score
+                        best_t = threshold
+                        best_model = model
+                elif (metric == "Davies-Bouldin"):
+                    score = metrics.davies_bouldin_score(datanp, labels)
+                    if (score < best_score):
+                        best_score = score
+                        best_t = threshold
+                        best_model = model
+                elif (metric == "Calinski-Harabasz"):
+                    score = metrics.calinski_harabasz_score(datanp, labels)
+                    if (score > best_score):
+                        best_score = score
+                        best_t = threshold
+                        best_model = model
+                
+            
+            except ValueError:
+                print(threshold, "for threshold result in only on label, remove it")
+                
             threshold += threshold_step
         print ("best threshold with", linkage, "aglomerative clustering and metrics", metric, ":", best_t)
 
@@ -119,12 +129,12 @@ def computeAglomerative (datanp, limit, k_min, k_max, threshold_min, threshold_s
 
 if __name__ == "__main__":
     path = './artificial/'
-    databrut = arff.loadarff ( open ( path + "donutcurves.arff" , 'r') )
+    databrut = arff.loadarff ( open ( path + "xclara.arff" , 'r') )
     datanp = [ [ x [ 0 ] ,x [ 1 ] ] for x in databrut [ 0 ] ]
     f0 = [element[0] for element in datanp]
     f1 = [element[1] for element in datanp]
     plt.scatter( f0 , f1 , s = 8 )
     plt.title( "Initial Data" )
     plt.show()
-    computeAglomerative(datanp, "clusters", 2, 100, 0, 0, 0, 'single', "Davies-Bouldin")
-    computeAglomerative(datanp, "threshold", 0, 0, 0.001, 0.001, 0.1, 'single', "Davies-Bouldin")
+    computeAglomerative(datanp, "clusters", 2, 100, 0, 0, 0, 'complete', "silhouette")
+    computeAglomerative(datanp, "threshold", 0, 0, 0.1, 0.1, 10, 'complete', "silhouette")
