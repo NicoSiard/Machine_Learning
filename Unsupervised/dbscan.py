@@ -70,7 +70,6 @@ def computeDBSCAN (datanp, nmin_min, nmin_max, epsilon_min, epsilon_step, epsilo
                  print(epsilon, "for epsilon and", n_min, "n_min result in only on label")
                  
              epsilon += epsilon_step
-    print ("best epsilon and n_min with DBSCAN and metrics", metric, ":", best_e, "and", best_n)
          
         
     
