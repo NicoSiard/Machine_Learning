@@ -18,15 +18,10 @@ from hierarchical import computeAglomerative
 
 
 
-
-
-
-
-
 if __name__ == "__main__":
     path = './dataset-rapport/'
 
-    name = ['zz2.txt']
+    name = ['x1.txt, x2.txt, x3.txt, x4.txt, y1.txt, zz1.txt, zz2.txt']
 
     for file in name :
         print (file, " :")
@@ -40,9 +35,9 @@ if __name__ == "__main__":
         print("   Kmeans :")
         computeKMeans(data, 2, 30, "silhouette")
         print("   Aglomerative :") 
-        computeAglomerative(data, "clusters", 2, 30, 0, 0, 0, 'complete', "Calinski-Harabasz")
-        computeAglomerative(data, "clusters", 2, 30, 0, 0, 0, 'average', "Calinski-Harabasz")
-        computeAglomerative(data, "clusters", 2, 30, 0, 0, 0, 'single', "Calinski-Harabasz")
+        computeAglomerative(data, "clusters", 2, 30, 0, 0, 0, 'complete', "silhouette")
+        computeAglomerative(data, "clusters", 2, 30, 0, 0, 0, 'average', "silhouette")
+        computeAglomerative(data, "clusters", 2, 30, 0, 0, 0, 'single', "silhouette")
 
         
         
