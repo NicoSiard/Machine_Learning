@@ -3,7 +3,7 @@
 """
 Created on Sun Jan 14 14:11:20 2024
 
-@author: rtessier
+@author: raphael tessier and nicolas siard
 """
 
 import numpy as np
@@ -37,15 +37,18 @@ def computeKMeans (datanp, k_min, k_max, metric):
         
     best_k = -1
     best_model = 0
-    
+    l_k = []
+    l_score =[]
     
     for k in range(k_min,k_max+1):
+        l_k.append(k)
         #fit model for k cluster
         model = cluster.KMeans(n_clusters =k ,n_init = 10, init = 'k-means++')
         model.fit(datanp)
         labels = model.labels_
         
         #compute metrics and compare with previous iteration
+        score = 0
         if (metric == "silhouette"):
             score = metrics.silhouette_score(datanp, labels)
             if (score > best_score):
@@ -64,10 +67,14 @@ def computeKMeans (datanp, k_min, k_max, metric):
                 best_score = score
                 best_k = k
                 best_model = model
+        l_score.append(score)
         
     
     f0 = [element[0] for element in datanp]
     f1 = [element[1] for element in datanp]
+    plt.plot(l_k,l_score)
+    plt.title ( " Score evolution for clustering Kmeans with metrics " + metric)
+    plt.show ()
     plt.scatter ( f0 , f1 , c = best_model.labels_ , s = 8 )
     plt.title ( " Data after clustering Kmeans with k = " + str(best_k) + " and metrics " + metric)
     plt.show ()
@@ -79,14 +86,15 @@ def computeKMeans (datanp, k_min, k_max, metric):
 
 if __name__ == "__main__":
     path = './artificial/'
-    databrut = arff.loadarff ( open ( path + "xclara.arff" , 'r') )
+    databrut = arff.loadarff ( open ( path + "smile1.arff" , 'r') )
     datanp = [ [ x [ 0 ] ,x [ 1 ] ] for x in databrut [ 0 ] ]
     f0 = [element[0] for element in datanp]
     f1 = [element[1] for element in datanp]
     plt.scatter( f0 , f1 , s = 8 )
     plt.title( " Initial Datas" )
     plt.show()
-    computeKMeans(datanp, 2, 20, "Davies-Bouldin")
+    computeKMeans(datanp, 2, 20, "silhouette")
+    
 
     
     
